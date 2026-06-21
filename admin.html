@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOMES — 관리자</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#FFCF0D;--navy:#020425;--cream:#F4F2EC;--line:#E7DDC6;
+  --gray:#6F7A83;--soft:#f6f7f9;--red:#e53e3e;--green:#2f855a;
+  --font:'Outfit','Pretendard',-apple-system,sans-serif;
+}
+body{font-family:var(--font);background:var(--cream);color:var(--navy);min-height:100vh}
+#loginOverlay{position:fixed;inset:0;background:var(--cream);display:flex;align-items:center;justify-content:center;z-index:100;padding:24px;}
+#loginOverlay.hidden{display:none}
+header{background:#fff;border-bottom:1px solid var(--line);height:60px;display:flex;align-items:center;padding:0 32px;justify-content:space-between;position:sticky;top:0;z-index:10;}
+.logo{font-size:20px;font-weight:800;letter-spacing:.18em;color:#FFCF0D}
+.header-right{display:flex;align-items:center;gap:12px}
+.admin-badge{background:var(--navy);color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;padding:4px 10px;border-radius:6px}
+main{max-width:700px;margin:0 auto;padding:36px 24px 80px}
+.page-title{font-size:22px;font-weight:800;margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--gray);margin-bottom:32px}
+.admin-pw-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin-bottom:28px}
+.admin-pw-title{font-size:13px;font-weight:700;margin-bottom:14px}
+.inline-row{display:flex;gap:10px;align-items:flex-end}
+.branch-list{display:flex;flex-direction:column;gap:12px}
+.branch-card{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.branch-header{display:flex;align-items:center;gap:12px;padding:16px 20px;cursor:pointer}
+.branch-header:hover{background:var(--soft)}
+.brand-dot-studio{width:10px;height:10px;border-radius:50%;background:var(--navy);flex-shrink:0}
+.brand-dot-accomo{width:10px;height:10px;border-radius:50%;background:#7b8fa8;flex-shrink:0}
+.branch-name-text{font-size:15px;font-weight:700;flex:1}
+.branch-pw-chip{font-size:12px;color:var(--gray);background:var(--soft);padding:3px 10px;border-radius:6px;letter-spacing:.06em}
+.chevron{color:var(--gray);transition:transform .2s}
+.branch-card.open .chevron{transform:rotate(180deg)}
+.branch-body{display:none;padding:20px;border-top:1px solid var(--soft)}
+.branch-card.open .branch-body{display:block}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-size:12px;font-weight:600;color:var(--gray);letter-spacing:.04em}
+.field input{padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;font-family:var(--font);font-size:14px;color:var(--navy);background:var(--soft);outline:none;transition:border-color .2s}
+.field input:focus{border-color:var(--navy);background:#fff}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:10px;border:none;font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;transition:opacity .15s}
+.btn:hover{opacity:.85}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-gold{background:var(--gold);color:var(--navy)}
+.btn-outline{background:#fff;color:var(--navy);border:1.5px solid var(--line)}
+.btn-sm{padding:8px 14px;font-size:13px;border-radius:8px}
+.save-row{margin-top:10px;display:flex;justify-content:flex-end}
+.section-save{display:flex;justify-content:center;margin-top:28px}
+#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;padding:12px 22px;border-radius:12px;font-size:14px;font-weight:600;white-space:nowrap;transition:transform .3s ease;z-index:200;pointer-events:none;}
+#toast.show{transform:translateX(-50%) translateY(0)}
+.loading{opacity:.5;pointer-events:none}
+@media(max-width:600px){header{padding:0 16px}main{padding:24px 16px 60px}.inline-row{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<div id="loginOverlay">
+  <div style="background:#fff;border:1px solid var(--line);border-radius:20px;padding:40px 32px;width:100%;max-width:340px;text-align:center">
+    <div style="font-size:26px;font-weight:800;letter-spacing:.18em;color:#FFCF0D;margin-bottom:6px">HOMES</div>
+    <p style="font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--gray);margin-bottom:24px">ADMIN ACCESS</p>
+    <div style="margin-bottom:10px">
+      <input type="password" id="adminLoginInput" placeholder="관리자 비밀번호"
+        style="width:100%;padding:13px 16px;border:1.5px solid var(--line);border-radius:12px;font-family:var(--font);font-size:15px;text-align:center;outline:none;background:var(--soft);color:var(--navy);"
+        onkeydown="if(event.key==='Enter')adminLogin()">
+    </div>
+    <p id="loginErr" style="font-size:12px;color:var(--red);min-height:16px;margin-bottom:12px"></p>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="adminLogin()">로그인</button>
+  </div>
+</div>
+
+<header>
+  <div class="logo">HOMES</div>
+  <div class="header-right">
+    <span class="admin-badge">ADMIN</span>
+    <button class="btn btn-outline btn-sm" onclick="adminLogout()">로그아웃</button>
+  </div>
+</header>
+
+<main>
+  <h1 class="page-title">지점 관리</h1>
+  <p class="page-sub">각 지점의 비밀번호와 노션 URL을 변경할 수 있습니다. 저장 시 즉시 모든 기기에 반영됩니다.</p>
+
+  <div class="admin-pw-card">
+    <p class="admin-pw-title">🔑 관리자 비밀번호 변경</p>
+    <div class="inline-row">
+      <div class="field" style="flex:1;margin-bottom:0">
+        <label>새 비밀번호</label>
+        <input type="password" id="newAdminPw" placeholder="새 비밀번호">
+      </div>
+      <div class="field" style="flex:1;margin-bottom:0">
+        <label>확인</label>
+        <input type="password" id="newAdminPwConfirm" placeholder="다시 입력">
+      </div>
+      <button class="btn btn-outline btn-sm" style="margin-bottom:1px;white-space:nowrap" onclick="changeAdminPw()">변경</button>
+    </div>
+    <p id="adminPwMsg" style="font-size:12px;margin-top:8px;min-height:16px"></p>
+  </div>
+
+  <div class="branch-list" id="branchList">
+    <p style="text-align:center;color:var(--gray);padding:20px">불러오는 중…</p>
+  </div>
+
+  <div class="section-save">
+    <button class="btn btn-primary" onclick="saveAll()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      모든 변경사항 저장
+    </button>
+  </div>
+</main>
+
+<div id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://zyeumxtemfmkbpviuxeo.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5ZXVteHRlbWZta2Jwdml1eGVvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE4NTkzNTUsImV4cCI6MjA5NzQzNTM1NX0.5v8SehoApGrqDwuvtwNRWJcWaStcPnS94AD3FO33ya4';
+const ADMIN_PW_KEY = 'homes_admin_pw';
+const DEFAULT_ADMIN_PW = 'homes';
+
+const BRANCH_INFO = {
+  anam:          { nameKo:'홈즈 스튜디오 안암',   nameEn:'Homes Studio Anam',          brand:'studio' },
+  seonjeongneung:{ nameKo:'홈즈 스튜디오 선정릉', nameEn:'Homes Studio Seonjeongneung', brand:'studio' },
+  namyeong:      { nameKo:'홈즈 스튜디오 남영',   nameEn:'Homes Studio Namyeong',       brand:'studio' },
+  gasan:         { nameKo:'아코모 가산',           nameEn:'Accomo Gasan',                brand:'accomo' },
+  hoegi:         { nameKo:'아코모 회기',           nameEn:'Accomo Hoegi',                brand:'accomo' },
+};
+
+let dbData = {};
+
+async function loadBranches() {
+  try {
+    const res  = await fetch(`${SUPABASE_URL}/rest/v1/branches?select=id,password,url`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    const data = await res.json();
+    data.forEach(row => { dbData[row.id] = row; });
+    renderBranches();
+  } catch(e) {
+    document.getElementById('branchList').innerHTML = '<p style="color:var(--red);text-align:center;padding:20px">데이터를 불러오지 못했습니다.</p>';
+  }
+}
+
+function renderBranches() {
+  const list = document.getElementById('branchList');
+  list.innerHTML = '';
+  Object.keys(BRANCH_INFO).forEach(id => {
+    const info = BRANCH_INFO[id];
+    const db   = dbData[id] || {};
+    const dotCls = info.brand === 'studio' ? 'brand-dot-studio' : 'brand-dot-accomo';
+    list.innerHTML += `
+    <div class="branch-card" id="bc-${id}">
+      <div class="branch-header" onclick="toggleCard('${id}')">
+        <div class="${dotCls}"></div>
+        <span class="branch-name-text">${info.nameKo}</span>
+        <span class="branch-pw-chip" id="chip-${id}">${db.password || '-'}</span>
+        <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="branch-body">
+        <div class="field">
+          <label>가이드북 비밀번호</label>
+          <input type="text" id="pw-${id}" value="${db.password || ''}" oninput="document.getElementById('chip-${id}').textContent=this.value">
+        </div>
+        <div class="field">
+          <label>노션 URL</label>
+          <input type="text" id="url-${id}" value="${db.url || ''}">
+        </div>
+      </div>
+    </div>`;
+  });
+}
+
+function toggleCard(id) {
+  document.getElementById('bc-'+id).classList.toggle('open');
+}
+
+async function saveAll() {
+  const btn = document.querySelector('.section-save .btn');
+  btn.classList.add('loading');
+  btn.textContent = '저장 중…';
+
+  try {
+    for (const id of Object.keys(BRANCH_INFO)) {
+      const pw  = document.getElementById('pw-'+id)?.value.trim();
+      const url = document.getElementById('url-'+id)?.value.trim();
+      await fetch(`${SUPABASE_URL}/rest/v1/branches?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ password: pw, url: url })
+      });
+    }
+    toast('모든 변경사항이 저장되었습니다 ✓');
+    loadBranches();
+  } catch(e) {
+    toast('저장 중 오류가 발생했습니다.');
+  } finally {
+    btn.classList.remove('loading');
+    btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> 모든 변경사항 저장`;
+  }
+}
+
+function adminLogin() {
+  const val = document.getElementById('adminLoginInput').value.trim();
+  const pw  = localStorage.getItem(ADMIN_PW_KEY) || DEFAULT_ADMIN_PW;
+  if (val === pw) {
+    document.getElementById('loginOverlay').classList.add('hidden');
+    loadBranches();
+  } else {
+    document.getElementById('loginErr').textContent = '비밀번호가 올바르지 않습니다.';
+    document.getElementById('adminLoginInput').value = '';
+  }
+}
+
+function adminLogout() {
+  document.getElementById('loginOverlay').classList.remove('hidden');
+  document.getElementById('adminLoginInput').value = '';
+  document.getElementById('loginErr').textContent = '';
+}
+
+function changeAdminPw() {
+  const a = document.getElementById('newAdminPw').value.trim();
+  const b = document.getElementById('newAdminPwConfirm').value.trim();
+  const msg = document.getElementById('adminPwMsg');
+  if (!a) { msg.style.color='var(--red)'; msg.textContent='새 비밀번호를 입력하세요.'; return; }
+  if (a !== b) { msg.style.color='var(--red)'; msg.textContent='비밀번호가 일치하지 않습니다.'; return; }
+  localStorage.setItem(ADMIN_PW_KEY, a);
+  msg.style.color='var(--green)'; msg.textContent='변경되었습니다.';
+  document.getElementById('newAdminPw').value='';
+  document.getElementById('newAdminPwConfirm').value='';
+  setTimeout(()=>msg.textContent='',3000);
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2400);
+}
+
+document.addEventListener('keydown', e => { if(e.key==='Escape') adminLogout(); });
+</script>
+</body>
+</html>
