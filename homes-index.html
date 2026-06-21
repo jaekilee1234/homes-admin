@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOMES — 가이드북</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#FFCF0D;--navy:#020425;--cream:#F4F2EC;--line:#E7DDC6;
+  --gray:#6F7A83;--soft:#f6f7f9;--font:'Outfit','Pretendard',-apple-system,sans-serif;
+}
+body{font-family:var(--font);background:var(--cream);color:var(--navy);min-height:100vh;padding:0 0 48px}
+
+/* 헤더 */
+.top-bar{
+  background:#fff;border-bottom:1px solid var(--line);
+  padding:0 24px;height:56px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:10;
+}
+.logo{font-size:20px;font-weight:800;letter-spacing:.18em;color:#FFCF0D}
+.lang-toggle{
+  display:flex;background:var(--soft);border-radius:8px;padding:3px;gap:2px;
+}
+.lang-btn{
+  padding:6px 14px;border-radius:6px;border:none;background:none;
+  font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;
+  color:var(--gray);transition:all .15s;
+}
+.lang-btn.active{background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+/* 메인 */
+main{max-width:480px;margin:0 auto;padding:32px 20px 0}
+.page-title{font-size:20px;font-weight:800;margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--gray);margin-bottom:28px}
+
+/* 브랜드 섹션 */
+.brand-section{margin-bottom:28px}
+.brand-label{
+  display:flex;align-items:center;gap:8px;
+  font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--gray);
+  margin-bottom:12px;
+}
+.brand-label::after{content:'';flex:1;height:1px;background:var(--line)}
+
+/* 지점 카드 */
+.branch-card{
+  background:#fff;border:1px solid var(--line);border-radius:16px;
+  padding:18px 20px;margin-bottom:10px;
+  display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;transition:border-color .15s, box-shadow .15s;
+  text-decoration:none;color:inherit;
+}
+.branch-card:hover{border-color:var(--navy);box-shadow:0 2px 8px rgba(2,4,37,.08)}
+.branch-card:active{transform:scale(.99)}
+
+.branch-left{display:flex;flex-direction:column;gap:3px}
+.branch-name{font-size:15px;font-weight:700;color:var(--navy)}
+.branch-brand{font-size:11px;font-weight:600;color:var(--gray);letter-spacing:.04em}
+
+.branch-arrow{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--soft);display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:background .15s;
+}
+.branch-card:hover .branch-arrow{background:var(--gold)}
+
+/* 지점별 브랜드 배지 */
+.badge-studio{
+  display:inline-block;background:var(--navy);color:#fff;
+  font-size:10px;font-weight:700;letter-spacing:.06em;
+  padding:2px 8px;border-radius:4px;margin-bottom:4px;
+}
+.badge-accomo{
+  display:inline-block;background:#7b8fa8;color:#fff;
+  font-size:10px;font-weight:700;letter-spacing:.06em;
+  padding:2px 8px;border-radius:4px;margin-bottom:4px;
+}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <span class="logo">HOMES</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="btnKo" onclick="setLang('ko')">한국어</button>
+    <button class="lang-btn" id="btnEn" onclick="setLang('en')">English</button>
+  </div>
+</div>
+
+<main>
+  <h1 class="page-title" id="mainTitle">지점을 선택하세요</h1>
+  <p class="page-sub" id="mainSub">입주민 가이드북을 확인할 지점을 선택해 주세요.</p>
+
+  <!-- HOMES STUDIO -->
+  <div class="brand-section">
+    <p class="brand-label" id="studioLabel">HOMES STUDIO</p>
+
+    <div class="branch-card" onclick="goGate('anam')">
+      <div class="branch-left">
+        <span class="badge-studio">HOMES STUDIO</span>
+        <span class="branch-name" id="name-anam">홈즈 스튜디오 안암</span>
+      </div>
+      <div class="branch-arrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+    </div>
+
+    <div class="branch-card" onclick="goGate('seonjeongneung')">
+      <div class="branch-left">
+        <span class="badge-studio">HOMES STUDIO</span>
+        <span class="branch-name" id="name-seonjeongneung">홈즈 스튜디오 선정릉</span>
+      </div>
+      <div class="branch-arrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+    </div>
+
+    <div class="branch-card" onclick="goGate('namyeong')">
+      <div class="branch-left">
+        <span class="badge-studio">HOMES STUDIO</span>
+        <span class="branch-name" id="name-namyeong">홈즈 스튜디오 남영</span>
+      </div>
+      <div class="branch-arrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACCOMO -->
+  <div class="brand-section">
+    <p class="brand-label" id="accomoLabel">ACCOMO</p>
+
+    <div class="branch-card" onclick="goGate('gasan')">
+      <div class="branch-left">
+        <span class="badge-accomo">ACCOMO</span>
+        <span class="branch-name" id="name-gasan">아코모 가산</span>
+      </div>
+      <div class="branch-arrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+    </div>
+
+    <div class="branch-card" onclick="goGate('hoegi')">
+      <div class="branch-left">
+        <span class="badge-accomo">ACCOMO</span>
+        <span class="branch-name" id="name-hoegi">아코모 회기</span>
+      </div>
+      <div class="branch-arrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+const TEXTS = {
+  ko: {
+    title: '지점을 선택하세요',
+    sub: '입주민 가이드북을 확인할 지점을 선택해 주세요.',
+    studioLabel: 'HOMES STUDIO',
+    accomoLabel: 'ACCOMO',
+    branches: {
+      anam: '홈즈 스튜디오 안암',
+      seonjeongneung: '홈즈 스튜디오 선정릉',
+      namyeong: '홈즈 스튜디오 남영',
+      gasan: '아코모 가산',
+      hoegi: '아코모 회기',
+    }
+  },
+  en: {
+    title: 'Select Your Branch',
+    sub: 'Please select your branch to view the resident guidebook.',
+    studioLabel: 'HOMES STUDIO',
+    accomoLabel: 'ACCOMO',
+    branches: {
+      anam: 'Homes Studio Anam',
+      seonjeongneung: 'Homes Studio Seonjeongneung',
+      namyeong: 'Homes Studio Namyeong',
+      gasan: 'Accomo Gasan',
+      hoegi: 'Accomo Hoegi',
+    }
+  }
+};
+
+let currentLang = 'ko';
+
+function openExternal() {
+  const url = window.location.href;
+  window.open('googlechrome://navigate?url=' + encodeURIComponent(url), '_blank');
+  setTimeout(() => { window.open(url, '_blank'); }, 500);
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  const t = TEXTS[lang];
+  document.getElementById('mainTitle').textContent = t.title;
+  document.getElementById('mainSub').textContent = t.sub;
+  document.getElementById('studioLabel').childNodes[0].textContent = t.studioLabel;
+  document.getElementById('accomoLabel').childNodes[0].textContent = t.accomoLabel;
+  Object.keys(t.branches).forEach(id => {
+    document.getElementById('name-' + id).textContent = t.branches[id];
+  });
+  document.getElementById('btnKo').classList.toggle('active', lang === 'ko');
+  document.getElementById('btnEn').classList.toggle('active', lang === 'en');
+  document.documentElement.lang = lang === 'ko' ? 'ko' : 'en';
+}
+
+function goGate(branchId) {
+  const base = window.location.href.replace('homes-index.html', '').replace(/\/$/, '');
+  window.location.href = base + '/homes-gate.html?branch=' + branchId + '&lang=' + currentLang;
+}
+</script>
+</body>
+</html>
